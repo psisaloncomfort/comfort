@@ -1,0 +1,438 @@
+
+﻿<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salón pre malých psov COMFORT </title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        body {
+            font-family: MS Reference Sans Serif, sans-serif;
+            color: #000000;
+            margin: 0;
+            padding: 0;
+            position: relative;
+            background-color: rgba(237, 237, 238, 0.5);
+        }
+        .slideshow {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            z-index: -1;
+            overflow: hidden;
+        }
+        .slideshow img {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 90%;
+            height: 100%;
+            object-fit: cover;
+            transform: translate(-50%, -50%);
+            opacity: 1;
+            animation: slideShow 30s infinite;
+        }
+        .slideshow img:nth-child(1) {
+            animation-delay: 5s;
+        }
+        .slideshow img:nth-child(2) {
+            animation-delay: 10s;
+        }
+        .slideshow img:nth-child(3) {
+            animation-delay: 15s;
+        }
+        .slideshow img:nth-child(4) {
+            animation-delay: 20s;
+        }
+        .slideshow img:nth-child(5) {
+            animation-delay: 25s;
+        }
+        @keyframes slideShow {
+            0% { opacity: 0; }
+            25% { opacity: 1; }
+            50% { opacity: 1; }
+            75% { opacity: 0; }
+            100% { opacity: 0; }
+        }
+        header {
+            background-color: rgba(255, 255, 255, 0.0);
+            color: white;
+            text-align: center;
+            padding: 1em 0;
+            position: relative;
+            z-index: 1;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.9); /* Обриси навколо заголовку */
+        }
+        
+        .logo {
+            position: absolute;
+            top: 10px;
+            left: 70px;
+        }
+        .logo img {
+            width: 100px;
+            height: auto;
+            cursor: pointer;
+        }
+        .blinking-logo {
+    animation: blink 3s infinite; /* Блимає кожну секунду */
+}
+
+@keyframes blink {
+    0%, 100% {
+        opacity: 1; /* Повністю видно */
+    }
+    50% {
+        opacity: 0; /* Невидимо */
+    }
+}
+
+        .contact-info {
+            position: absolute;
+            top: 20px;
+            right: 80px;
+        }
+        .contact-info p {
+            margin: 0;
+            font-size: 0.8em;
+            color: white; /* Колір тексту телефону */
+        }
+        nav {
+            background-color: rgba(51, 51, 51, 0.0);
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+        nav a {
+            color: white;
+            text-align: center;
+            padding: 14px 20px;
+            text-decoration: none;
+            margin: 0 10px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 1.5); /* Обриси навколо тексту навігації */
+            transition: color 0.3s;
+        }
+        nav a:hover {
+            color: #75fb81; /* Кольор при наведенні */
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.); /* Обриси навколо тексту при наведенні */
+        }
+        main {
+            padding: 10px;
+            position: relative;
+            z-index: 1;
+            margin-top: 70vh; /* Відступ для зміщення контенту нижче */
+        }
+        footer {
+            background-color: rgba(51, 51, 51, 0.0);
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+            position: relative;
+            width: 100%;
+            bottom: 0;
+            z-index: 1;
+        }
+        .section {
+            background-color: rgba(255, 255, 255, 0.0);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.);
+        }
+        .section h2 {
+            color: #333333;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.0); /* Обриси навколо заголовків секцій */
+        }
+        .gallery img {
+            max-width: 50%;
+            height: auto;
+            display: block;
+            margin: 0 auto 10px auto;
+        }
+         
+        .reviews form {
+            display: flex;
+            flex-direction: column;
+        }
+        .reviews textarea {
+            margin-bottom: 10px;
+            padding: 10px;
+            resize: vertical;
+        }
+        .visit-counter {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            background-color: rgba(0, 0, 0, 0.0);
+            color: black;
+            padding: 10px;
+            border-radius: 5px;
+            z-index: 10;
+        }
+        .photo-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.photo-container img {
+    width: 90%;
+    max-width: 1200px; /* Фіксована ширина */
+    height: auto; /* Фіксована висота */
+    object-fit: cover;
+    margin: auto;
+}
+.photo-container img {
+    position: relative;
+    left: -100px; /* Зсуває зображення вліво */
+}
+
+
+        #map {
+            height: 500px;
+            width: 100%;
+            margin: 40px 0;
+        }
+        .leaflet-control-attribution {
+            display: none !important;
+        }
+   .photo-container img {
+    margin-bottom: 10px; /* Зменшує відступ між фото і текстом */
+}
+
+.section h2 {
+    margin-top: 5px; /* Зменшує відступ зверху тексту */
+    margin-bottom: 0px; /* Зменшує відступ знизу тексту */
+}
+
+    </style>
+</head>
+<body>
+
+
+
+
+<div class="slideshow">
+    <img src="slide1.jpg" alt="Slide 1">
+    <img src="slide2.jpg" alt="Slide 2">
+    <img src="slide3.jpg" alt="Slide 3">
+    <img src="slide4.jpg" alt="Slide 4">
+</div>
+
+<header>
+    <div class="logo">
+    
+    <a href="javascript:void(0)" onclick="showVideo()">
+        
+    <img src="logo.png" alt="Logo salónu" class="blinking-logo">
+   
+    </a>
+
+</div>
+    <h1>Salón pre malých psov COMFORT</h1>
+    <div class="contact-info">
+        <p>0919275250</p>
+        <p>Pon.-Pia. 8:00-16:00</p>
+        <p>na objednávku</p>
+    </div>
+</header>
+
+<nav>
+    <a href="#about">O nás</a>
+    <a href="#shop">Ozónová terapia a SPA</a>
+    <a href="#Higijena">Hygijena</a>
+    <a href="#services">Služby a ceny</a>
+    <a href="#gallery">Galéria</a>
+    <a href="#Contact">Kontakty</a>
+</nav>
+
+<main>
+    <section id="about" class="section">
+        <h2>O nás</h2>
+        <div class="photo-container"> 
+        <img src="info.jpg" alt="Info">
+
+          </div>
+        
+    </a>
+
+    <section id="shop" class="section">
+        <h2>Ozónová terapia a SPA</h2>
+        <div class="photo-container">
+            <img src="servis1.jpg" alt="servis 1">
+            
+        </div>
+    </section>
+    <section id="Higijena" class="section">
+        <h2>Higijena</h2>
+        <div class="photo-container">
+        <img src="hyg1.jpg" alt="hyg 1">
+        <img src="hyg2.jpg" alt="hyg 2">
+        </div>
+        <p></p>
+    </section>
+
+    <section id="services" class="section">
+        <h2>Služby a ceny</h2>
+        
+        <div class="photo-container">
+            <img src="ceny.jpg" alt="ceny">
+            <img src="ceny1.jpg" alt="ceny 1">
+            
+        </div>
+    </section>
+
+    
+
+    
+
+    <section id="gallery" class="section gallery">
+        <h2>Galéria</h2>
+        
+        <div class="photo-container">
+            <img src="dog1.jpg" alt="dog 1">
+            <img src="dog2.jpg" alt="dog 2">
+            <img src="dog3.jpg" alt="dog 3">
+        </div>
+    </section>
+
+    <section id="Contact" class="Contact">
+        <h2>Kontakty</h2>
+        <div class="section Contact">
+        <p>Adresa: Nešporova, 2550/35, Poprad-Veľká </p>
+        <p>Telefón: 0919275250</p>
+        <p>Email: vladirov@gmail.com.</p>
+       </div>
+   </section>
+      
+       
+
+    <section id="map-section" class="section">
+        <h2>Kde nás nájdete</h2>
+        <div id="map"></div>
+    </section>
+
+    
+</main>
+
+<footer>
+    &copy; 2024 Salón pre malých psov "COMFORT"
+                 Nešporova 2550/35
+</footer>
+
+<div class="visit-counter">
+    <span id="visit-count"></span>
+
+</div>
+
+
+<div id="video-modal" style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 100;">
+    <video id="promo-video" width="100%" height="100%" controls autoplay>
+        <source src="video.mp4" type="video/mp4">
+        Váš prehliadač nepodporuje video tag.
+    </video>
+    <button onclick="closeVideo()" style="position: absolute; top: 10px; right: 10px; background: white; border: none; padding: 10px; cursor: pointer;">Zatvoriť</button>
+</div>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script>
+    document.addEventListener('scroll', function() {
+        var slideshow = document.querySelector('.slideshow');
+        if (window.scrollY > 500) {
+            slideshow.style.display = 'none';
+        } else {
+            slideshow.style.display = 'block';
+        }
+    });
+
+    // Відображення та закриття відео
+    function showVideo() {
+        document.getElementById('video-modal').style.display = 'block';
+        document.getElementById('promo-video').play();
+    }
+
+    function closeVideo() {
+        var videoModal = document.getElementById('video-modal');
+        var promoVideo = document.getElementById('promo-video');
+        videoModal.style.display = 'none';
+        promoVideo.pause();
+        promoVideo.currentTime = 0;
+    }
+
+    // Лічильник відвідувань
+    document.addEventListener('DOMContentLoaded', function() {
+        var visitCount = localStorage.getItem('visitCount') || 0;
+        visitCount++;
+        localStorage.setItem('visitCount', visitCount);
+        document.getElementById('visit-count').innerText = visitCount;
+     });
+
+   // Функція для обнулення лічильника
+
+    function resetVisitCount() {
+    localStorage.setItem('visitCount', 0); 
+   // Обнулити в localStorage
+    document.getElementById('visit-count').innerText = 0; 
+   // Оновити текст на сторінці
+    alert('Лічильник обнулений!');
+}
+
+    // Ініціалізація карти OpenStreetMap
+    var map = L.map('map').setView([49.0675351, 20.2936956], 15); // Замініть на координати вашого салону
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    L.marker([49.0675351, 20.2936956]).addTo(map) // Замініть на координати вашого салону
+        .bindPopup('Salón pre malých psov "COMFORT"<p>Nešporova 2550/35,Poprad</p>')
+        .openPopup();
+
+    // Додаємо рецензію
+    document.querySelector('#reviews form').addEventListener('submit', function(event) {
+        event.preventDefault(); // Запобігає перезавантаженню сторінки
+        const reviewText = this.querySelector('textarea').value;
+
+        if (reviewText.trim() !== '') {
+            const reviewItem = document.createElement('div');
+            reviewItem.classList.add('review-item'); // Клас для стилів, якщо потрібно
+
+            // Створюємо текст рецензії
+            const reviewContent = document.createElement('p');
+            reviewContent.textContent = reviewText;
+
+            // Створюємо кнопку для видалення
+            const deleteButton = document.createElement('button');
+            deleteButton.textContent = 'odstraniť';
+            deleteButton.classList.add('delete-button'); // Клас для стилів, якщо потрібно
+
+            // Додаємо обробник подій для кнопки "Odstraniť"
+            deleteButton.addEventListener('click', function() {
+                reviewItem.remove(); // Видаляє поточну рецензію
+            });
+
+            // Додаємо текст та кнопку в елемент рецензії
+            reviewItem.appendChild(reviewContent);
+            reviewItem.appendChild(deleteButton);
+
+            // Додаємо рецензію в список
+            document.querySelector('#reviews-list').appendChild(reviewItem);
+
+            // Очищуємо поле вводу
+            this.querySelector('textarea').value = '';
+        } else {
+            alert('Напишіть щось у рецензії перед відправкою!');
+        }
+    });
+</script>
+
+
+
+</body>
+</html>
