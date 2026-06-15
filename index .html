@@ -183,14 +183,18 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
-        /* PEVNÉ ROZMERY PRE MAPU V CSS */
+        /* 100% RESPONSÍVNY BLOK PRE MAPU */
+        .map-wrapper {
+            width: 100%;
+            clear: both;
+            display: block;
+            position: relative;
+        }
         #map {
             height: 450px;
             width: 100%;
-            margin: 20px 0;
             border-radius: 5px;
             position: relative;
-            display: block;
             z-index: 1;
         }
         .leaflet-control-attribution { display: none !important; }
@@ -335,7 +339,9 @@
        
     <section id="map-section" class="section">
         <h2>Kde nás nájdete</h2>
-        <div id="map"></div>
+        <div class="map-wrapper">
+            <div id="map"></div>
+        </div>
     </section>
 </main>
 
@@ -358,33 +364,71 @@
 
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script>
-    var map; // Globálna premenná pre mapu
+    var map;
 
-    // HLAVNÁ FUNKCIA: Naštartuje mapu bezpečne až po načítaní celého okna
     function initMap() {
-        // Skontroluje, či už mapa náhodou nie je vytvorená
-        if (map) return; 
-
+        // Inicializácia mapy priamo na ID elementu
         map = L.map('map', {
             center: [49.0675351, 20.2936956],
             zoom: 15,
             tap: false
         });
 
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; OpenStreetMap'
-        }).addTo(map);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
         var marker = L.marker([49.0675351, 20.2936956]).addTo(map)
             .bindPopup('<b>Salón pre malých psov "COMFORT"</b><br>Nešporova 2550/35, Poprad');
 
         marker.openPopup();
 
-        // Poistka: Okamžité prekreslenie hneď po zapnutí
-        setTimeout(function() {
-            map.invalidateSize();
-        }, 200);
+        // Absolútna poistka pre mobily: tri postupné vynútené prekreslenia veľkosti
+        setTimeout(function() { map.invalidateSize(); }, 100);
+        setTimeout(function() { map.invalidateSize(); }, 500);
+        setTimeout(function() { map.invalidateSize(); }, 1200);
     }
 
-    // Spustenie mapy hneď ako prehliadač kompletne dotiahne celú stránku
-   
+    // Spustenie po kompletnej príprave okna prehliadača
+    window.addEventListener('load', initMap);
+    window.addEventListener('resize', function() { if(map) map.invalidateSize(); });
+
+    document.addEventListener('scroll', function() {
+        var slideshow = document.querySelector('.slideshow');
+        if (window.scrollY > 500) {
+            slideshow.style.display = 'none';
+        } else {
+            slideshow.style.display = 'block';
+        }
+        if(map) map.invalidateSize(); // Prekresľovanie mapy pri pohybe prsta na mobile
+    });
+
+    // Oprava pre prebudenie mapy pri kliknutí na menu kategórií
+    document.querySelectorAll('nav a').forEach(function(link) {
+        link.addEventListener('click', function() {
+            setTimeout(function() { if(map) map.invalidateSize(); }, 300);
+            setTimeout(function() { if(map) map.invalidateSize(); }, 800);
+        });
+    });
+
+    function showVideo() {
+        document.getElementById('video-modal').style.display = 'block';
+        document.getElementById('promo-video').play();
+    }
+
+    function closeVideo() {
+        var videoModal = document.getElementById('video-modal');
+        var promoVideo = document.getElementById('promo-video');
+        videoModal.style.display = 'none';
+        promoVideo.pause();
+        promoVideo.currentTime = 0;
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        var visitCount = localStorage.getItem('visitCount') || 0;
+        visitCount++;
+        localStorage.setItem('visitCount', visitCount);
+        document.getElementById('visit-count').innerText = visitCount;
+    });
+</script>
+
+</body>
+</html>
