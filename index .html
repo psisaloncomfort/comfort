@@ -154,7 +154,6 @@
             margin-bottom: 15px;
         }
         
-        /* Kontajner pre fotky v bežných sekciách */
         .photo-container {
             display: flex;
             flex-wrap: wrap;
@@ -165,11 +164,10 @@
             width: 100%;
             max-width: 500px;
             height: auto;
-            object-fit: contain; /* Zabezpečí, že sa info letáky a cenníky neorežú */
+            object-fit: contain;
             border-radius: 5px;
         }
 
-        /* ŠPECIÁLNE NASTAVENIE PRE GALÉRIU - ABY SA FOTKY PSOV NEOREZÁVALI */
         .gallery-container {
             display: flex;
             flex-wrap: wrap;
@@ -179,17 +177,20 @@
         .gallery-container img {
             width: auto;
             max-width: 100%;
-            height: 350px; /* Fixne určená výška pre zarovnanie na PC */
-            object-fit: contain; /* Zobrazí CELÚ fotografiu bez orezania okrajov */
+            height: 350px;
+            object-fit: contain;
             border-radius: 5px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
+        /* OPRAVENÝ ŠTÝL PRE MAPU */
         #map {
-            height: 400px;
+            height: 450px;
             width: 100%;
             margin: 20px 0;
             border-radius: 5px;
+            position: relative;
+            display: block;
         }
         .leaflet-control-attribution { display: none !important; }
 
@@ -227,13 +228,12 @@
             
             .photo-container img { max-width: 100%; }
             
-            /* Prispôsobenie výšky fotiek psov na mobile, aby netrčali */
             .gallery-container img {
                 width: 100%;
-                height: auto; /* Na mobile sa výška prispôsobí šírke displeja */
+                height: auto;
                 max-width: 100%;
             }
-            #map { height: 300px; }
+            #map { height: 320px; }
         }
     </style>
 </head>
@@ -355,24 +355,31 @@
     <button onclick="closeVideo()" style="position: absolute; top: 10px; right: 10px; background: white; border: none; padding: 10px; cursor: pointer; border-radius: 3px;">Zatvoriť</button>
 </div>
 
+<!-- LEAFLET JAVASCRIPT KNIŽNICA -->
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script>
+    // Inicializácia OpenStreetMap (Poprad)
+    var map = L.map('map').setView([49.0675351, 20.2936956], 15);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap'
+    }).addTo(map);
+
+    var marker = L.marker([49.0675351, 20.2936956]).addTo(map)
+        .bindPopup('<b>Salón pre malých psov "COMFORT"</b><br>Nešporova 2550/35, Poprad')
+        .openPopup();
+
+    // TÁTO FUNKCIA OPRAVUJE ZOBRAZOVANIE MAPY (Prepočíta veľkosť kontajnera)
+    setTimeout(function() {
+        map.invalidateSize();
+    }, 300);
+
     document.addEventListener('scroll', function() {
         var slideshow = document.querySelector('.slideshow');
         if (window.scrollY > 500) {
             slideshow.style.display = 'none';
         } else {
             slideshow.style.display = 'block';
+            map.invalidateSize(); // Prepočíta veľkosť mapy pri skrolovaní
         }
-    });
-
-    function showVideo() {
-        document.getElementById('video-modal').style.display = 'block';
-        document.getElementById('promo-video').play();
-    }
-
-    function closeVideo() {
-        var videoModal = document.getElementById('video-modal');
-        var promoVideo = document.getElementById('promo-video');
-        videoModal.style.display = 'none';
-       
+   
