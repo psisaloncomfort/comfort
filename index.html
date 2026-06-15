@@ -183,14 +183,17 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
+        /* STABILIZOVANÝ KONTAJNER PRE MAPU */
         #map {
             height: 450px;
             width: 100%;
+            min-height: 350px;
             margin: 20px 0;
             border-radius: 5px;
             position: relative;
             display: block;
             z-index: 1;
+            background: #e5e3df; /* Dočasné pozadie kým sa načítajú dlaždice */
         }
         .leaflet-control-attribution { display: none !important; }
 
@@ -233,7 +236,7 @@
                 height: auto;
                 max-width: 100%;
             }
-            #map { height: 320px; }
+            #map { height: 350px; }
         }
     </style>
 </head>
@@ -266,7 +269,7 @@
     <a href="#Higijena">Hygiena</a>
     <a href="#services">Služby a ceny</a>
     <a href="#gallery">Galéria</a>
-    <a href="#Contact">Kontakty</a>
+    <a href="#Contact" onclick="forceMapUpdate()">Kontakty</a>
 </nav>
 
 <main>
@@ -357,11 +360,11 @@
 
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script>
-    // Inicializácia mapy pre Poprad
+    // 1. INICIALIZÁCIA MAPY (Okamžitá, s vypnutým tap pre lepšiu kompatibilitu)
     var map = L.map('map', {
         center: [49.0675351, 20.2936956],
         zoom: 15,
-        tap: false // Rieši problémy s klikaním na dotykových displejoch
+        tap: false
     });
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -371,17 +374,12 @@
     var marker = L.marker([49.0675351, 20.2936956]).addTo(map)
         .bindPopup('<b>Salón pre malých psov "COMFORT"</b><br>Nešporova 2550/35, Poprad');
 
-    // Ak ide o počítač, okno otvoríme hneď. Na mobile až po kliknutí.
+    // Otvorí okno len na veľkých displejoch, na mobile netreba preťažovať štart
     if (window.innerWidth > 768) {
         marker.openPopup();
     }
 
-    // NAJDÔLEŽITEJŠIA OPRAVA: Prebudenie mapy hneď po tom, ako mobil načíta okná
-    window.addEventListener('load', function() {
+    // 2. FUNKCIA PRE AKTUALIZÁCIU MAPY (Keď používateľ klikne na menu)
+    function forceMapUpdate() {
         setTimeout(function() {
-            map.invalidateSize();
-        }, 500);
-    });
-
-    document.addEventListener('scroll', function() {
-        var slideshow = document.querySelector('.slidesh
+           
